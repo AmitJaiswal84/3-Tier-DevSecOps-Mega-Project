@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import axios from '../axios';
 import UserForm from '../components/UserForm';
 import { AuthContext } from '../context/AuthContext';
@@ -12,27 +12,28 @@ function UserDashboard() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // ✅ FIX: Memoized fetchUsers, so ESLint won't complain
+  const fetchUsers = useCallback(() => {
+    axios
+      .get('/users')
+      .then(res => setUsers(res.data))
+      .catch(err => {
+        console.error('Fetch Error:', err);
+        if (err.response?.status === 401) logout();
+      });
+  }, [logout]); // logout is stable from context
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
     } else {
       fetchUsers();
     }
-  }, [user, navigate]);
-
-  const fetchUsers = () => {
-    axios
-      .get('/users') // ✅ Fixed
-      .then(res => setUsers(res.data))
-      .catch(err => {
-        console.error('Fetch Error:', err);
-        if (err.response?.status === 401) logout();
-      });
-  };
+  }, [user, navigate, fetchUsers]); // ✅ No warnings now
 
   const handleCreate = (userData) => {
     axios
-      .post('/users', userData) // ✅ Fixed
+      .post('/users', userData)
       .then(() => {
         fetchUsers();
         setEditingUser(null);
@@ -43,7 +44,7 @@ function UserDashboard() {
   const handleUpdate = (id, userData) => {
     if (user?.role !== 'admin') return;
     axios
-      .put(`/users/${id}`, userData) // ✅ Fixed
+      .put(`/users/${id}`, userData)
       .then(() => {
         fetchUsers();
         setEditingUser(null);
@@ -54,7 +55,7 @@ function UserDashboard() {
   const handleDelete = (id) => {
     if (user?.role !== 'admin') return;
     axios
-      .delete(`/users/${id}`) // ✅ Fixed
+      .delete(`/users/${id}`)
       .then(fetchUsers)
       .catch(err => console.error('Delete Error:', err));
   };
@@ -113,6 +114,7 @@ function UserDashboard() {
           ))}
         </tbody>
       </table>
+
       <button
         className="fab"
         onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
