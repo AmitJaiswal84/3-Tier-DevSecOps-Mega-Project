@@ -19,8 +19,8 @@ spec:
         - name: backend
           image: worldfellow/cibackend:latest
           imagePullPolicy: Always
-      ports:
-        - containerPort: 9080
+          ports:
+            - containerPort: 9080   # ✔ FIXED indentation
 ---
 apiVersion: v1
 kind: Service
@@ -31,6 +31,7 @@ spec:
   selector:
     app: backend
   ports:
-  - port: 9080
-    targetPort: 9080
+    - port: 9080
+      targetPort: 9080
   type: ClusterIP
+
