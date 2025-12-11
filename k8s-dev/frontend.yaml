@@ -13,10 +13,13 @@ spec:
       labels:
         app: frontend
     spec:
+      imagePullSecrets:
+        - name: docker-hub-secret
       containers:
-      - name: frontend
-        image: worldfellow/cifrontend:latest
-        ports:
+        - name: frontend
+          image: worldfellow/cifrontend:latest
+          imagePullPolicy: Always
+      ports:
         - containerPort: 90
 ---
 apiVersion: v1
