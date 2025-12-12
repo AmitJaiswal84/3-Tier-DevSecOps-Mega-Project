@@ -21,15 +21,29 @@ spec:
           value: root
         ports:
         - containerPort: 3306
+        volumeMounts:
+        - mountPath: /docker-entrypoint-initdb.d
+          name: mysql-init
+      volumes:
+      - name: mysql-init
+        configMap:
+          name: mysql-init-config
 ---
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
-  name: mysql
+  name: mysql-init-config
   namespace: dev
-spec:
-  selector:
-    app: mysql
-  ports:
-  - port: 3306
-    targetPort: 3306
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS mysql;
+
+    USE mysql;
+
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(100),
+        password VARCHAR(100)
+    );
+
