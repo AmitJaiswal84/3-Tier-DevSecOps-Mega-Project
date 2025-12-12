@@ -24,5 +24,5 @@ COPY --from=build /app/build /usr/share/nginx/html
 # 🔒 Prevent directory listings and ensure correct permissions
 RUN chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 90
 CMD ["nginx", "-g", "daemon off;"]
