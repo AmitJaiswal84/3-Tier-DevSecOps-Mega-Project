@@ -5,6 +5,6 @@ COPY package*.json ./
 RUN npm install --only=production
 
 COPY . .
-EXPOSE 5000
+EXPOSE 9080
 CMD ["node", "app.js"]
 
