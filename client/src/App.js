@@ -1,16 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute"; // ✅ FIXED PATH
+import ProtectedRoute from "./ProtectedRoute"; // ✅ CORRECT PATH
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public route */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected user dashboard */}
         <Route
           path="/dashboard"
           element={
@@ -20,7 +18,6 @@ function App() {
           }
         />
 
-        {/* Admin-only route */}
         <Route
           path="/admin"
           element={
@@ -30,7 +27,6 @@ function App() {
           }
         />
 
-        {/* Fallback */}
         <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
@@ -38,5 +34,6 @@ function App() {
 }
 
 export default App;
+
 
 
