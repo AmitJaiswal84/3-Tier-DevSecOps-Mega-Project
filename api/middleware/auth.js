@@ -1,30 +1,56 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET = process.env.JWT_SECRET || 'secretkey';
+/**
+ * 🔐 JWT Secret (MUST be set via env)
+ */
+if (!process.env.JWT_SECRET) {
+  throw new Error('❌ JWT_SECRET is not set in environment variables');
+}
 
-// ✅ Middleware to verify JWT token
+const JWT_SECRET = process.env.JWT_SECRET;
+
+/**
+ * ✅ Middleware: Verify JWT Token
+ */
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+  // Expect: Authorization: Bearer <token>
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      message: 'Authorization token missing or malformed',
+    });
+  }
+
+  const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // Attach user info to request
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({
+      message: 'Invalid or expired token',
+    });
   }
 };
 
-// ✅ Middleware to restrict access to admin only
+/**
+ * 🔒 Middleware: Allow Admin Only
+ */
 const isAdmin = (req, res, next) => {
-  if (req.user?.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied: Admins only' });
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Access denied: Admins only',
+    });
   }
   next();
 };
 
-module.exports = { verifyToken, isAdmin };
+module.exports = {
+  verifyToken,
+  isAdmin,
+};
 
