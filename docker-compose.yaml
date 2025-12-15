@@ -6,7 +6,7 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: Aditya
+      MYSQL_ROOT_PASSWORD: litewave
       MYSQL_DATABASE: crud_app
     volumes:
       - mysql-data:/var/lib/mysql
@@ -20,23 +20,22 @@ services:
     environment:
       DB_HOST: mysql
       DB_USER: root
-      DB_PASSWORD: Aditya
+      DB_PASSWORD: litewave
       DB_NAME: crud_app
       JWT_SECRET: devopsShackSuperSecretKey
       RESET_ADMIN_PASS: 'true'
     depends_on:
       - mysql
     ports:
-      - "5000:5000"
+      - "9080:9080"
 
   frontend:
     build: ./client
     container_name: frontend-react
     ports:
-      - "3000:80"
+      - "90:90"
     depends_on:
       - backend
 
 volumes:
   mysql-data:
-
