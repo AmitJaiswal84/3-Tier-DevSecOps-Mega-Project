@@ -10,7 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const db = require('./models/db'); // MySQL pool connection
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 9080;
 
 // Middleware
 app.use(cors());
@@ -43,7 +43,7 @@ const waitForDb = async (retries = 30, delay = 2000) => {
 // Function to seed admin user if not exists
 const seedAdminUser = async () => {
   const name = process.env.ADMIN_NAME || 'Admin User';
-  const email = process.env.ADMIN_EMAIL || 'admin@example.com';
+  const email = process.env.ADMIN_EMAIL || 'devops@edulab.in';
   const password = process.env.ADMIN_PASSWORD || 'admin123';
   const role = process.env.ADMIN_ROLE || 'admin';
 
